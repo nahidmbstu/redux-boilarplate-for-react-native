@@ -6,6 +6,7 @@ import {
   Text,
   View,
   Card,
+  ActivityIndicator
 
 } from 'react-native';
 
@@ -21,7 +22,7 @@ class App extends Component {
 
     super(props);
      
-    this.state = { name : ''  , height : '' , show : false  }
+    this.state = { people: [] , show : false , activity : null  }
 
   }
 
@@ -29,36 +30,30 @@ class App extends Component {
 
     console.log('compsonentWillReceiveProps............ from Api');
 
-     console.log(newProps)
-
-     console.log(newProps.people.peopleReducer.people)
-
-     let  arr = newProps.people.peopleReducer.people[0]
+     let  arr = newProps.people.peopleReducer.people
 
      this.setState( {
-         
-      name : arr.name ,
-
-      height:arr.height,
-
+      activity: false,
       show: true,
-
-
+      people : [ ...this.state.people , ...arr ],
      })
-
-    
-    console.log("new peoples state --------- ", this.state.name)
    
   }
 
 
   getpeople = () => {
 
+    this.setState({
+      activity: true,
+    })
+
     this.props.dispatch(fetchPeopleFromAPI())
 
   }
 
   render() {
+
+    console.log("dddddddddddddddddddddddddd",this.state.people)
 
     return (
 
@@ -71,16 +66,23 @@ class App extends Component {
           <Text style={styles.buttonText}>Load People</Text>
         </TouchableHighlight>
 
+        {this.state.activity ? ( 
+ 
+          <ActivityIndicator />
+
+        ) : null }
+
         { this.state.show ? (
 
-          <View>
+          this.state.people.map((data,i) => (
+           
+            <View>
+            <Text key= {i}>{ data.name } </Text>
+            </View>
 
-          <Text style= {{fontSize :35 ,}} > Name : {this.state.name} </Text>
- 
-          <Text style={{ fontSize: 35, }}> Height : {this.state.height} </Text>
+          
+           ))
 
-          </View>
-       
         ) : null}
 
       </View>
